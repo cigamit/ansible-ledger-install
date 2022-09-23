@@ -6,8 +6,6 @@ If multiserver deployment, ensure passwordless SSH keys are setup between server
 
 ## Install Ansible and other Requirements
 ```
-yum install python3-pip git
-pip install ansible
-ansible-galaxy collection install community.mysql
+yum install epel-release ansible git -y
 ```
 
