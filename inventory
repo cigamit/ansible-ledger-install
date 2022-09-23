@@ -13,3 +13,7 @@ localhost ansible_connection=local
 database_name=ledger
 database_username=ledger
 database_password=
+ledger_user_email=
+ledger_password=
+encryption_key1=
+encryption_key2=

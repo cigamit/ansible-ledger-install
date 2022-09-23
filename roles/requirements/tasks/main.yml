@@ -1,0 +1,2 @@
+- name: Install community.mysql collection
+  shell: ansible-galaxy collection install community.mysql

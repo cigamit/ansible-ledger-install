@@ -1,0 +1,202 @@
+- name: Install EPEL
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+
+- name: Install Packages
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - git
+    - nginx
+    - php
+    - php-fpm
+    - php-json
+    - php-pdo
+    - php-mysqlnd
+    - unzip
+    - net-tools
+
+- name: Create Directory for SSL Certs
+  ansible.builtin.file:
+    name: /etc/ssl/private
+    state: directory
+    mode: 0700
+
+- name: Check for Cert
+  ansible.builtin.stat:
+    path: /etc/ssl/private/nginx-selfsigned.key
+  register: cert
+
+- name: Create SSL Certs
+  ansible.builtin.shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=Ledger/L=Ledger/O=Ledger/OU=Ledger/CN=ledger" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+  when: not cert.stat.exists
+
+- name: Create SSL Certs DHParam (this will take several minutes)
+  ansible.builtin.shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  when: not cert.stat.exists
+
+- name: Create nginx configuration
+  ansible.builtin.copy:
+    src: files/web.conf.j2
+    dest: /etc/nginx/conf.d/web.conf
+  notify: Restart nginx
+
+- name: Create nginx configuration
+  ansible.builtin.copy:
+    src: files/parser.conf.j2
+    dest: /etc/nginx/conf.d/parser.conf
+  notify: Restart nginx
+  when: parser
+
+- name: Create php-fpm configuration
+  ansible.builtin.copy:
+    src: files/www.conf.j2
+    dest: /etc/php-fpm.d/www.conf
+  notify: Restart php
+
+- name: Create Directory for Ledger
+  ansible.builtin.file:
+    name: /opt/app/html
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+
+- name: Create Directory for Logs
+  ansible.builtin.file:
+    name: /opt/app/logs
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+
+- name: Set permissions on /var/lib/php/session
+  ansible.builtin.file:
+    name: /var/lib/php/session
+    state: directory
+    owner: nginx
+    group: nginx
+    recurse: yes
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  when: "'firewalld.service' in services"
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+  when: "'firewalld.service' in services"
+
+- name: permit traffic in default zone for parser service
+  ansible.posix.firewalld:
+    port: 5000/tcp
+    permanent: yes
+    state: enabled
+  when:
+    - "'firewalld.service' in services"
+    - parser
+
+- name: Start php-fpm Service
+  ansible.builtin.service:
+    name: php-fpm
+    state: started
+    enabled: true
+
+- name: Start nginx Service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Git checkout
+  ansible.builtin.git:
+    repo: https://github.com/cigamit/ansible-ledger.git
+    dest: /opt/app/html
+    force: yes
+
+- name: Check for Composer
+  stat:
+    path: /usr/local/bin/composer
+  register: composer
+
+- name: Get Composer Checksum
+  shell: curl https://getcomposer.org/download/latest-stable/composer.phar.sha256
+  register: composer_checksum
+  when: not composer.stat.exists
+
+- name: Download Composer
+  ansible.builtin.get_url:
+    url: https://getcomposer.org/download/latest-stable/composer.phar
+    dest: /usr/local/bin/composer
+    force: yes
+    checksum: "sha256:{{ composer_checksum.stdout }}"
+    mode: +x
+  when: not composer.stat.exists
+
+- name: Run composer
+  shell: /usr/local/bin/composer install
+  args:
+    chdir: /opt/app/html
+
+- name: Check for Config file
+  stat:
+    path: /opt/app/html/includes/config.php
+  register: config
+
+- when: not config.stat.exists
+  block:
+
+  - name: Create config.php
+    copy:
+      src: /opt/app/html/includes/config.php.dist
+      dest: /opt/app/html/includes/config.php
+
+  - name: Config | Set DB Server
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: '^\$sql_server'
+      line: $sql_server = '{{ hostvars[groups.database.0].ansible_facts.default_ipv4.address }}';
+
+  - name: Config | Set DB Name
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: '^\$mydb'
+      line: $mydb = '{{ database_name }}';
+
+  - name: Config | Set DB User
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: '^\$sql_user'
+      line: $sql_user = '{{ database_username }}';
+
+  - name: Config | Set DB Pass
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: '^\$sql_pass'
+      line: $sql_pass = '{{ database_password }}';
+
+  - name: Config | FIRSTKEY
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: 'FIRSTKEY'
+      line: define('FIRSTKEY', '{{ encryption_key1 | b64encode }}');
+
+  - name: Config | SECONDKEY
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: 'SECONDKEY'
+      line: define('SECONDKEY', '{{ encryption_key2 | b64encode }}');
+
+
+
+
