@@ -1,0 +1,83 @@
+- name: Install EPEL
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+
+- name: Install Packages
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nginx
+
+- name: Create Directory for SSL Certs
+  ansible.builtin.file:
+    name: /etc/ssl/private
+    state: directory
+    mode: 0700
+
+- name: Check for Cert
+  ansible.builtin.stat:
+    path: /etc/ssl/private/nginx-selfsigned.key
+  register: cert
+
+- name: Create SSL Certs
+  ansible.builtin.shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=Ledger/L=Ledger/O=Ledger/OU=Ledger/CN=ledger" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+  when: not cert.stat.exists
+
+- name: Create SSL Certs DHParam (this will take several minutes)
+  ansible.builtin.shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  when: not cert.stat.exists
+
+- name: Create nginx configuration
+  ansible.builtin.template:
+    src: templates/web.conf.j2
+    dest: /etc/nginx/conf.d/web.conf
+  notify: Restart nginx
+
+- name: Create nginx configuration
+  ansible.builtin.template:
+    src: templates/parser.conf.j2
+    dest: /etc/nginx/conf.d/parsers.conf
+  notify: Restart nginx
+
+- name: Create Directory for Logs
+  ansible.builtin.file:
+    name: /opt/app/logs
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  when: 
+    - "'firewalld.service' in services"
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+  when: 
+    - "'firewalld.service' in services"
+
+- name: permit traffic in default zone for parser service
+  ansible.posix.firewalld:
+    port: 5000/tcp
+    permanent: yes
+    state: enabled
+  when:
+    - "'firewalld.service' in services"
+
+- name: Start nginx Service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

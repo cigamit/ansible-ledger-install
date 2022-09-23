@@ -17,6 +17,16 @@
     state: started
     enabled: true
 
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: permit traffic in default zone for https service
+  ansible.posix.firewalld:
+    port: 3306/tcp
+    permanent: yes
+    state: enabled
+  when: "'firewalld.service' in services"
+
 - name: Create Database
   community.mysql.mysql_db:
     name: "{{ database_name }}"

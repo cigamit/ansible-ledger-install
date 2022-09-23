@@ -5,6 +5,11 @@
   roles:
     - requirements
 
+- name: Ensure Connections and Populate Variables
+  hosts: all
+  tasks:
+    - setup:
+
 - name: Install Ledger Database
   hosts: database
   roles:
@@ -23,3 +28,8 @@
     parser: true
   roles:
     - web
+
+- name: Install Ledger LB Servers
+  hosts: lb
+  roles:
+    - lb

@@ -89,14 +89,19 @@
     service: http
     permanent: yes
     state: enabled
-  when: "'firewalld.service' in services"
+  when: 
+    - "'firewalld.service' in services"
+    - not parser
 
 - name: permit traffic in default zone for https service
   ansible.posix.firewalld:
     service: https
     permanent: yes
     state: enabled
-  when: "'firewalld.service' in services"
+  when: 
+    - "'firewalld.service' in services"
+    - not parser
+
 
 - name: permit traffic in default zone for parser service
   ansible.posix.firewalld:
@@ -161,6 +166,7 @@
     copy:
       src: /opt/app/html/includes/config.php.dist
       dest: /opt/app/html/includes/config.php
+      remote_src: true
 
   - name: Config | Set DB Server
     ansible.builtin.lineinfile:
