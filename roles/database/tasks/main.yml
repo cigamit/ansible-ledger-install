@@ -48,7 +48,7 @@
     priv: '{{ database_name }}.*:ALL'
     host: "{{ hostvars[item].ansible_facts.default_ipv4.address }}"
     state: present
-  loop: "{{ groups.web }}"
+  loop: "{{ (groups.web + groups.parser) | unique }}"
   when: db.changed
 
 - name: Create ledger user
