@@ -1,0 +1,6 @@
+---
+- name: Install Ansible Ledger
+  hosts: database
+  roles:
+    - database
+    

@@ -1,0 +1,45 @@
+- name: Install EPEL
+  package:
+    name: epel-release
+    state: present
+
+- name: Install Packages
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - mariadb-server
+    - python3-mysqlclient
+
+- name: Start MariaDB Service
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: Create Database
+  community.mysql.mysql_db:
+    name: "{{ database_name }}"
+    state: present
+  register: db
+
+- name: Get default DB Dump from Github
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/cigamit/ansible-ledger/main/includes/ledger.sql
+    dest: /tmp/ledger.sql
+  when: db.changed
+
+- name: Import Database Dump
+  community.mysql.mysql_db:
+    name: "{{ database_name }}"
+    state: import
+    target: /tmp/ledger.sql
+  when: db.changed
+
+- name: Create database user
+  community.mysql.mysql_user:
+    name: "{{ database_username }}"
+    password: "{{ database_username }}"
+    priv: '{{ database_name }}.*:ALL'
+    state: present
+  when: db.changed

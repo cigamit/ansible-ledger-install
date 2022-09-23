@@ -1,0 +1,15 @@
+[lb]
+
+[web]
+localhost ansible_connection=local
+
+[parser]
+localhost ansible_connection=local
+
+[database]
+localhost ansible_connection=local
+
+[all:vars]
+database_name=ledger
+database_username=ledger
+database_password=
