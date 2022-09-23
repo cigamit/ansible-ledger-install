@@ -6,7 +6,8 @@ RHEL/CENTOS/ROCKY Linux based server (version 8 or higher preferred)
 
 ## Install Ansible and other Requirements
 ```
-yum install epel-release ansible git -y
+yum install epel-release -y
+yum install ansible git -y
 git clone https://github.com/cigamit/ansible-ledger-install.git
 cd ansible-ledger-install
 ```
