@@ -32,6 +32,23 @@ server {
 	location / {
 		index parse.php;
 	}
+	
+	location ~ /(LICENSE\.txt|composer\.lock|composer\.json|nginx\.conf|web\.config|htaccess\.txt|\.htaccess|\.gitignore) { return 404; }
+
+	location /templates {
+		deny all;
+		return 404;
+	}
+
+	location /includes {
+		deny all;
+		return 404;
+	}
+
+	location /vendor {
+		deny all;
+		return 404;
+	}
 
 	location ~ \.php$ {
 		fastcgi_pass 127.0.0.1:9000;
