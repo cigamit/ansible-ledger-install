@@ -3,6 +3,12 @@
     name: epel-release
     state: present
 
+- name: Enable PHP 8 Module
+  ansible.builtin.dnf:
+    name: '@postgresql:9.6'
+    state: present
+  when: ansible_distribution_major_version == "8"
+
 - name: Install Packages
   ansible.builtin.yum:
     name: "{{ item }}"
