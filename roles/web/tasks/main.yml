@@ -1,3 +1,11 @@
+# Disabling SELinux until we set it up later
+- name: Disable SELinux (for now)
+  ansible.posix.selinux:
+    state: disabled
+
+- name: Setenforce 0
+  shell: setenforce 0
+
 - name: Install EPEL
   ansible.builtin.yum:
     name: epel-release
