@@ -1,3 +1,11 @@
+# Disabling SELinux until we set it up later
+- name: Disable SELinux (for now)
+  ansible.posix.selinux:
+    state: disabled
+
+- name: Setenforce 0
+  shell: setenforce 0
+  
 - name: Install EPEL
   ansible.builtin.yum:
     name: epel-release
@@ -59,6 +67,7 @@
     state: enabled
   when: 
     - "'firewalld.service' in services"
+  notify: Restart firewalld
 
 - name: permit traffic in default zone for https service
   ansible.posix.firewalld:
@@ -67,6 +76,7 @@
     state: enabled
   when: 
     - "'firewalld.service' in services"
+  notify: Restart firewalld
 
 - name: permit traffic in default zone for parser service
   ansible.posix.firewalld:
@@ -75,6 +85,7 @@
     state: enabled
   when:
     - "'firewalld.service' in services"
+  notify: Restart firewalld
 
 - name: Start nginx Service
   ansible.builtin.service:
