@@ -107,6 +107,7 @@
   when: 
     - "'firewalld.service' in services"
     - not parser
+  notify: Restart firewalld
 
 - name: permit traffic in default zone for https service
   ansible.posix.firewalld:
@@ -116,7 +117,7 @@
   when: 
     - "'firewalld.service' in services"
     - not parser
-
+  notify: Restart firewalld
 
 - name: permit traffic in default zone for parser service
   ansible.posix.firewalld:
@@ -126,6 +127,7 @@
   when:
     - "'firewalld.service' in services"
     - parser
+  notify: Restart firewalld
 
 - name: Start php-fpm Service
   ansible.builtin.service:
