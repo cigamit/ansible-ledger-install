@@ -23,6 +23,7 @@
     - php-mysqlnd
     - unzip
     - net-tools
+    - php-xml
 
 - name: Create Directory for SSL Certs
   ansible.builtin.file:
