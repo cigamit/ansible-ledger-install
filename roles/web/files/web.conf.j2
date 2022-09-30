@@ -61,6 +61,7 @@ server {
 	rewrite  ^/changes/view/(.+)?$		/changes.php?action=view&change=$1 break;
 
 	rewrite  ^/facts/$					/facts.php break;
+	rewrite  ^/logout/$					/logout.php break;
 	rewrite  ^/reports/$				/reports.php break;
 
 	rewrite  ^/reports/edit/(.+)?$		/reports.php?action=edit&report=$1 break;
