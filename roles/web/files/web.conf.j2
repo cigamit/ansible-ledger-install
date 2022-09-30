@@ -61,10 +61,14 @@ server {
 	rewrite  ^/changes/view/(.+)?$		/changes.php?action=view&change=$1 break;
 
 	rewrite  ^/facts/$					/facts.php break;
+        rewrite  ^/forgot_password/$             /forgot_password.php break;
+
 	rewrite  ^/logout/$					/logout.php break;
 	rewrite  ^/reports/$				/reports.php break;
 
+        rewrite  ^/reports/delete/(.+)?$          /reports.php?action=delete&report=$1 break;
 	rewrite  ^/reports/edit/(.+)?$		/reports.php?action=edit&report=$1 break;
+        rewrite  ^/reports/new/?$                /reports.php?action=new break;
 	rewrite  ^/reports/view/(.+)?$		/reports.php?action=view&report=$1 break;
 
 	location ~ \.php$ {
