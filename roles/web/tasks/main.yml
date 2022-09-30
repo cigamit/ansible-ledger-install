@@ -5,6 +5,7 @@
 
 - name: Setenforce 0
   shell: setenforce 0
+  when: ansible_selinux.mode != "disabled"
   ignore_errors: true
 
 - name: Install EPEL
