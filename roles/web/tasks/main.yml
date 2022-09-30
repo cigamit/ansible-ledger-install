@@ -5,6 +5,7 @@
 
 - name: Setenforce 0
   shell: setenforce 0
+  ignore_errors: true
 
 - name: Install EPEL
   ansible.builtin.yum:
@@ -45,12 +46,14 @@
   register: cert
 
 - name: Create SSL Certs
-  ansible.builtin.shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=Ledger/L=Ledger/O=Ledger/OU=Ledger/CN=ledger" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+  ansible.builtin.shell: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=Ledger/L=Ledger/O=Ledger/OU=Ledger/CN={{ ansible_default_ipv4.address }}" -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
   when: not cert.stat.exists
+  notify: Restart nginx
 
 - name: Create SSL Certs DHParam (this will take several minutes)
   ansible.builtin.shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
   when: not cert.stat.exists
+  notify: Restart nginx
 
 - name: Create nginx configuration
   ansible.builtin.copy:

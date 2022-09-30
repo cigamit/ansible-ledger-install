@@ -5,7 +5,8 @@
 
 - name: Setenforce 0
   shell: setenforce 0
-  
+  ignore_errors: true
+ 
 - name: Install EPEL
   ansible.builtin.yum:
     name: epel-release
