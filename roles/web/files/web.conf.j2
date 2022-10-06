@@ -51,6 +51,11 @@ server {
         return 404;
     }
 
+    location /utility {
+        deny all;
+        return 404;
+    }
+
     location /vendor {
         deny all;
         return 404;
@@ -74,6 +79,7 @@ server {
     rewrite  ^/users/$                    /users.php break;
     rewrite  ^/users/delete/(.+)?$        /users.php?action=delete&user=$1 break;
     rewrite  ^/users/edit/(.+)?$          /users.php?action=edit&user=$1 break;
+	rewrite  ^/users/save/(.+)?$          /users.php?action=save&user=$1 break;
     rewrite  ^/users/new/?$               /users.php?action=new break;
 
     location ~ \.php$ {
