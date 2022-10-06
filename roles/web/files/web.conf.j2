@@ -78,12 +78,12 @@ server {
     rewrite  ^/reports/view/(.+)?$        /reports.php?action=view&report=$1 break;
 
     rewrite  ^/settings/$                 /settings.php break;
-    rewrite  ^/settings/save/$            /settings.php break;
+    rewrite  ^/settings/save/$            /settings.php?action=save break;
 
     rewrite  ^/users/$                    /users.php break;
     rewrite  ^/users/delete/(.+)?$        /users.php?action=delete&user=$1 break;
     rewrite  ^/users/edit/(.+)?$          /users.php?action=edit&user=$1 break;
-	rewrite  ^/users/save/(.+)?$          /users.php?action=save&user=$1 break;
+    rewrite  ^/users/save/(.+)?$          /users.php?action=save&user=$1 break;
     rewrite  ^/users/new/?$               /users.php?action=new break;
 
     location ~ \.php$ {
