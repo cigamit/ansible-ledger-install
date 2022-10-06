@@ -14,22 +14,30 @@
   hosts: database
   roles:
     - database
-    
+  tags:
+   - database
+
 - name: Install Ledger Web Servers
   hosts: web
   vars:
     parser: false
   roles:
     - web
-    
+  tags:
+   - web
+
 - name: Install Ledger Parser Servers
   hosts: parser
   vars:
     parser: true
   roles:
     - web
+  tags:
+   - parser
 
 - name: Install Ledger LB Servers
   hosts: lb
   roles:
     - lb
+  tags:
+   - lb
