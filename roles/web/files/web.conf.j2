@@ -64,17 +64,17 @@ server {
     rewrite  ^/forgot_password/$          /forgot_password.php break;
 
     rewrite  ^/logout/$                   /logout.php break;
-    rewrite  ^/reports/$                  /reports.php break;
 
+    rewrite  ^/reports/$                  /reports.php break;
     rewrite  ^/reports/delete/(.+)?$      /reports.php?action=delete&report=$1 break;
     rewrite  ^/reports/edit/(.+)?$        /reports.php?action=edit&report=$1 break;
     rewrite  ^/reports/new/?$             /reports.php?action=new break;
     rewrite  ^/reports/view/(.+)?$        /reports.php?action=view&report=$1 break;
 
     rewrite  ^/users/$                    /users.php break;
-    rewrite  ^/users/edit/(.+)?$          /users.php?action=edit&report=$1 break;
+    rewrite  ^/users/delete/(.+)?$        /users.php?action=view&user=$1 break;
+    rewrite  ^/users/edit/(.+)?$          /users.php?action=edit&user=$1 break;
     rewrite  ^/users/new/?$               /users.php?action=new break;
-    rewrite  ^/users/view/(.+)?$          /users.php?action=view&report=$1 break;
 
     location ~ \.php$ {
         fastcgi_pass 127.0.0.1:9000;
