@@ -64,5 +64,5 @@
 - name: Create ledger user
   community.mysql.mysql_query:
     login_db: "{{ database_name }}"
-    query: "INSERT INTO `users` (`name`, `username`, `email`, `password`,`registered`) VALUES ('{{ ledger_user_email }}','{{ ledger_user_email }}','{{ ledger_user_email }}','{{ ledger_password | hash('sha1') }}',1)"
+    query: "INSERT INTO `users` (`name`, `username`, `email`, `password`,`registered`, `super`) VALUES ('{{ ledger_user_email }}','{{ ledger_user_email }}','{{ ledger_user_email }}','{{ ledger_password | hash('sha1') }}',1,1)"
   when: db.changed
