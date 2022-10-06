@@ -225,6 +225,12 @@
       regexp: 'SECONDKEY'
       line: define('SECONDKEY', '{{ encryption_key2 | b64encode }}');
 
+  # END BLOCK
 
-
+- name: Create a cron job for scheduled tasks
+  ansible.builtin.cron:
+    name: Ledger Scheduled Tasks
+    minute: 0
+    hour: 1
+    job: "/usr/bin/php /opt/app/html/utility/cron.php > /dev/null"
 

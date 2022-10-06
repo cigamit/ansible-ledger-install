@@ -4,6 +4,7 @@ upstream web {
 	server {{ hostvars[h].ansible_facts.default_ipv4.address }};
 {% endfor %}
 }
+
 server {
 	listen 80;
 	listen 443 http2 ssl;
