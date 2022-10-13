@@ -76,6 +76,8 @@ server {
     rewrite  ^/reports/edit/(.+)?$        /reports.php?action=edit&report=$1 break;
     rewrite  ^/reports/new/?$             /reports.php?action=new break;
     rewrite  ^/reports/view/(.+)?$        /reports.php?action=view&report=$1 break;
+    rewrite  ^/reports/perms/(.+)/user/remove/(.+)?$        /reports.php?action=removeuserperm&report=$1&user=$2 break;
+    rewrite  ^/reports/perms/(.+)?$       /reports.php?action=perms&report=$1 break;
 
     rewrite  ^/settings/$                 /settings.php break;
     rewrite  ^/settings/save/$            /settings.php?action=save break;
