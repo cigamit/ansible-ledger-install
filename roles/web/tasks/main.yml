@@ -232,5 +232,11 @@
     name: Ledger Scheduled Tasks
     minute: 0
     hour: 1
-    job: "/usr/bin/php /opt/app/html/utility/cron.php > /dev/null"
+    job: "/usr/bin/php /opt/app/html/utility/nightly_cron.php > /dev/null"
 
+- name: Create a cron job for scheduled tasks
+  ansible.builtin.cron:
+    name: Ledger Mail Tasks
+    minute: *
+    hour: *
+    job: "/usr/bin/php /opt/app/html/utility/minute_cron.php > /dev/null"
