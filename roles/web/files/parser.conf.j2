@@ -55,6 +55,8 @@ server {
         return 404;
     }
 
+    rewrite  ^/(.+)$                        /parse.php break;
+
     location ~ \.php$ {
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
