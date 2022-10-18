@@ -225,6 +225,23 @@
       regexp: 'SECONDKEY'
       line: define('SECONDKEY', '{{ encryption_key2 | b64encode }}');
 
+  - name: Config | SMTP_SERVER
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: 'SMTP_SERVER'
+      line: define('SMTP_SERVER', '{{ smtp_server }}');
+
+  - name: Config | SMTP_USER
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: 'SMTP_USER'
+      line: define('SMTP_USER', '{{ smtp_user }}');
+
+  - name: Config | SMTP_PASSWORD
+    ansible.builtin.lineinfile:
+      path: /opt/app/html/includes/config.php
+      regexp: 'SMTP_PASSWORD'
+      line: define('SMTP_PASSWORD', '{{ smtp_password }}');
   # END BLOCK
 
 - name: Create a cron job for scheduled tasks

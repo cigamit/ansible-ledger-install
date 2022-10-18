@@ -62,32 +62,38 @@ server {
         return 404;
     }
 
-    rewrite  ^/account/$                  /account.php break;
-    rewrite  ^/changes/$                  /changes.php break;
-    rewrite  ^/changes/view/(.+)?$        /changes.php?action=view&change=$1 break;
+    rewrite  ^/account/$                        /account.php break;
+    rewrite  ^/changes/$                        /changes.php break;
+    rewrite  ^/changes/view/([0-9]+)?$          /changes.php?action=view&change=$1 break;
 
-    rewrite  ^/facts/$                    /facts.php break;
-    rewrite  ^/forgot_password/$          /forgot_password.php break;
+    rewrite  ^/facts/$                          /facts.php break;
+    rewrite  ^/forgot_password/$                /forgot_password.php break;
 
-    rewrite  ^/logout/$                   /logout.php break;
+    rewrite  ^/logout/$                         /logout.php break;
 
-    rewrite  ^/reports/$                  /reports.php break;
-    rewrite  ^/reports/delete/(.+)?$      /reports.php?action=delete&report=$1 break;
-    rewrite  ^/reports/edit/(.+)?$        /reports.php?action=edit&report=$1 break;
-    rewrite  ^/reports/new/?$             /reports.php?action=new break;
-    rewrite  ^/reports/view/(.+)?$        /reports.php?action=view&report=$1 break;
-    rewrite  ^/reports/perms/(.+)/user/remove/(.+)?$        /reports.php?action=removeuserperm&report=$1&user=$2 break;
-    rewrite  ^/reports/perms/(.+)/team/remove/(.+)?$        /reports.php?action=removeuserperm&report=$1&team=$2 break;
-    rewrite  ^/reports/perms/(.+)?$       /reports.php?action=perms&report=$1 break;
+    rewrite  ^/reports/$                        /reports.php break;
+    rewrite  ^/reports/delete/([0-9]+)?$        /reports.php?action=delete&report=$1 break;
+    rewrite  ^/reports/edit/([0-9]+)?$          /reports.php?action=edit&report=$1 break;
+    rewrite  ^/reports/new/?$                   /reports.php?action=new break;
+    rewrite  ^/reports/view/([0-9]+)?$          /reports.php?action=view&report=$1 break;
 
-    rewrite  ^/settings/$                 /settings.php break;
-    rewrite  ^/settings/save/$            /settings.php?action=save break;
+    rewrite  ^/reports/perms/([0-9]+)/user/remove/([0-9]+)?$        /reports.php?action=removeuserperm&report=$1&user=$2 break;
+    rewrite  ^/reports/perms/([0-9]+)/team/remove/([0-9]+)?$        /reports.php?action=removeuserperm&report=$1&team=$2 break;
+    rewrite  ^/reports/perms/([0-9]+)?$         /reports.php?action=perms&report=$1 break;
 
-    rewrite  ^/users/$                    /users.php break;
-    rewrite  ^/users/delete/(.+)?$        /users.php?action=delete&user=$1 break;
-    rewrite  ^/users/edit/(.+)?$          /users.php?action=edit&user=$1 break;
-    rewrite  ^/users/save/(.+)?$          /users.php?action=save&user=$1 break;
-    rewrite  ^/users/new/?$               /users.php?action=new break;
+
+    rewrite  ^/reports/([0-9]+)/schedule/$      /reports.php?action=schedules&report=$1 break;
+    rewrite  ^/reports/([0-9]+)/schedule/edit/([0-9]+)?$      /reports.php?action=schedules&report=$1&schedule=$2 break;
+
+
+    rewrite  ^/settings/$                       /settings.php break;
+    rewrite  ^/settings/save/$                  /settings.php?action=save break;
+
+    rewrite  ^/users/$                          /users.php break;
+    rewrite  ^/users/delete/([0-9]+)?$          /users.php?action=delete&user=$1 break;
+    rewrite  ^/users/edit/([0-9]+)?$            /users.php?action=edit&user=$1 break;
+    rewrite  ^/users/save/([0-9]+)?$            /users.php?action=save&user=$1 break;
+    rewrite  ^/users/new/?$                     /users.php?action=new break;
 
     location ~ \.php$ {
         fastcgi_pass 127.0.0.1:9000;
