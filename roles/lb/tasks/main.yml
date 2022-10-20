@@ -1,12 +1,3 @@
-# Disabling SELinux until we set it up later
-#- name: Disable SELinux (for now)
-#  ansible.posix.selinux:
-#    state: disabled
-
-#- name: Setenforce 0
-#  shell: setenforce 0
-#  when: ansible_selinux.mode != "disabled"
-#  ignore_errors: true
 
 - name: Ensure Nginx can connect to network
   ansible.posix.seboolean:
