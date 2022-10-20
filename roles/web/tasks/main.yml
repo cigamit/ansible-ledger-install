@@ -288,6 +288,6 @@
 - name: Create a cron job for scheduled tasks
   ansible.builtin.cron:
     name: Ledger Mail Tasks
-    minute: *
-    hour: *
+    minute: "*"
+    hour: "*"
     job: "/usr/bin/php /opt/app/html/utility/minute_cron.php > /dev/null"
