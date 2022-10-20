@@ -113,15 +113,6 @@
     owner: nginx
     group: nginx
 
-- name: Allow Nginx to modify files in /opt/app/
-  community.general.sefcontext:
-    target: '/opt/app(/.*)?'
-    setype: httpd_sys_rw_content_t
-    state: present
-
-- name: Apply new SELinux file context to filesystem
-  ansible.builtin.command: restorecon -irv /opt/app
-
 - name: Set permissions on /var/lib/php/session
   ansible.builtin.file:
     name: /var/lib/php/session
@@ -162,18 +153,6 @@
     - "'firewalld.service' in services"
     - parser
   notify: Restart firewalld
-
-- name: Start php-fpm Service
-  ansible.builtin.service:
-    name: php-fpm
-    state: started
-    enabled: true
-
-- name: Start nginx Service
-  ansible.builtin.service:
-    name: nginx
-    state: started
-    enabled: true
 
 - name: Git checkout
   ansible.builtin.git:
@@ -273,6 +252,27 @@
       regexp: 'SMTP_PASSWORD'
       line: define('SMTP_PASSWORD', '{{ smtp_password }}');
   # END BLOCK
+
+- name: Allow Nginx to modify files in /opt/app/
+  community.general.sefcontext:
+    target: '/opt/app(/.*)?'
+    setype: httpd_sys_rw_content_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  ansible.builtin.command: restorecon -irv /opt/app
+
+- name: Start php-fpm Service
+  ansible.builtin.service:
+    name: php-fpm
+    state: started
+    enabled: true
+
+- name: Start nginx Service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
 
 - name: Create a cron job for scheduled tasks
   ansible.builtin.cron:
