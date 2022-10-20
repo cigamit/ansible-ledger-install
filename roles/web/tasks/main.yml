@@ -26,6 +26,22 @@
     state: true
     persistent: true
 
+- name: Allow Nginx to modify files in /opt/app/
+  community.general.sefcontext:
+    target: '/opt/app(/.*)?'
+    setype: httpd_sys_content_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  ansible.builtin.command: restorecon -irv /srv/git_repos
+
+- name: Allow Nginx to listen on tcp port 5000
+  community.general.seport:
+    ports: 5000
+    proto: tcp
+    setype: http_port_t
+    state: present
+
 - name: Install EPEL
   ansible.builtin.yum:
     name: epel-release
