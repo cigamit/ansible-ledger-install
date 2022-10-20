@@ -14,18 +14,6 @@
     state: true
     persistent: true
 
-- name: Ensure Nginx can connect to remote database
-  ansible.posix.seboolean:
-    name: httpd_can_network_connect_db
-    state: true
-    persistent: true
-
-- name: Ensure Nginx can connect to SMTP/sendmail
-  ansible.posix.seboolean:
-    name: httpd_can_sendmail
-    state: true
-    persistent: true
-
 - name: Allow Nginx to listen on tcp port 5000
   community.general.seport:
     ports: 5000
