@@ -22,15 +22,6 @@
     state: true
     persistent: true
 
-- name: Allow Nginx to modify files in /opt/app/
-  community.general.sefcontext:
-    target: '/opt/app(/.*)?'
-    setype: httpd_sys_rw_content_t
-    state: present
-
-- name: Apply new SELinux file context to filesystem
-  ansible.builtin.command: restorecon -irv /opt/app
-
 - name: Allow Nginx to listen on tcp port 5000
   community.general.seport:
     ports: 5000
@@ -121,6 +112,15 @@
     mode: 0755
     owner: nginx
     group: nginx
+
+- name: Allow Nginx to modify files in /opt/app/
+  community.general.sefcontext:
+    target: '/opt/app(/.*)?'
+    setype: httpd_sys_rw_content_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  ansible.builtin.command: restorecon -irv /opt/app
 
 - name: Set permissions on /var/lib/php/session
   ansible.builtin.file:
