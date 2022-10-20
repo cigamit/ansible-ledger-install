@@ -1,12 +1,30 @@
 # Disabling SELinux until we set it up later
-- name: Disable SELinux (for now)
-  ansible.posix.selinux:
-    state: disabled
+#- name: Disable SELinux (for now)
+#  ansible.posix.selinux:
+#    state: disabled
 
-- name: Setenforce 0
-  shell: setenforce 0
-  when: ansible_selinux.status != "disabled"
-  ignore_errors: true
+#- name: Setenforce 0
+#  shell: setenforce 0
+#  when: ansible_selinux.status != "disabled"
+#  ignore_errors: true
+
+- name: Ensure Nginx can connect to network
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
+
+- name: Ensure Nginx can connect to remote database
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect_db
+    state: true
+    persistent: true
+
+- name: Ensure Nginx can connect to SMTP/sendmail
+  ansible.posix.seboolean:
+    name: httpd_can_sendmail
+    state: true
+    persistent: true
 
 - name: Install EPEL
   ansible.builtin.yum:
