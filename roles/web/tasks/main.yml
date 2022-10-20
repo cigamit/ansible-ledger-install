@@ -1,4 +1,9 @@
 
+- name: Ensure policycoreutils-python-utils is installed
+  dnf:
+    name: policycoreutils-python-utils
+    state: present
+
 - name: Ensure Nginx can connect to network
   ansible.posix.seboolean:
     name: httpd_can_network_connect
